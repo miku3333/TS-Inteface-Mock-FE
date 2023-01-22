@@ -1,0 +1,50 @@
+.schema {
+    // height: 100%;
+    // margin-top: 4px;
+    margin-left: 20px;
+
+    .key,
+    .extraType {
+        display: inline;
+        // font-size: 14px;
+    }
+}
+
+.noMask {
+    position: relative;
+    z-index: 1000;
+}
+
+.title {
+    font-size: 14px;
+    height: 30px;
+    line-height: 30px;
+    background: #ccc;
+    // margin-bottom: 4px;
+
+    .arrow {
+        > svg {
+            transition: all 0.3s;
+        }
+    }
+
+    .tag {
+        display: inline-block;
+        margin-right: 8px;
+    }
+}
+
+.list {
+    transition: max-height 0.3s ease-in;
+    overflow: hidden;
+    // margin-top: 4px;
+    // margin-top: 4px;
+    > div {
+        > div {
+            margin-top: 4px;
+        }
+        // > div:last-child {
+        //     margin-bottom: 4px;
+        // }
+    }
+}

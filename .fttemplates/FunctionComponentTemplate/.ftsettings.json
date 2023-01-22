@@ -1,0 +1,7 @@
+{
+  "name": "函数式组件模版",
+  "openFilesWhenDone": [
+    "style.module.less",
+    "index.tsx"
+  ]
+}
