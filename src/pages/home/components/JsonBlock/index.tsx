@@ -50,8 +50,8 @@ const tagMap = {
         tag: <Tag color='orange'>布尔</Tag>
     },
     5: {
-        name: '布尔',
-        tag: <Tag color='red'>布尔</Tag>
+        name: 'ERROR',
+        tag: <Tag color='red'>ERROR</Tag>
     },
     6: {
         name: '枚举',
@@ -80,7 +80,7 @@ const JsonBlock = memo(({ paths, k, parentSchema, currentSchema, depth, noHeight
         const temp = 1;
         return temp;
     }, []);
-    const { objectFormRef, arrayFormRef, stringFormRef } = useModelRef();
+    const { objectFormRef, arrayFormRef, stringFormRef, numberFormRef, booleanFormRef, enumFormRef, anyOfFormRef } = useModelRef();
     const listRef = useRef<HTMLDivElement | null>(null);
     const [maxHeight, setMaxHeight, resetMaxHeight] = useResetState(0);
     const [listClose, setListClose] = useState(true);
@@ -132,6 +132,14 @@ const JsonBlock = memo(({ paths, k, parentSchema, currentSchema, depth, noHeight
             arrayFormRef.current?.openArrayForm?.(currentSchema);
         } else if (currentSchema.key === SCHEMA_TYPE.string) {
             stringFormRef.current?.openStringForm?.(currentSchema);
+        } else if (currentSchema.key === SCHEMA_TYPE.number) {
+            numberFormRef.current?.openNumberForm?.(currentSchema);
+        } else if (currentSchema.key === SCHEMA_TYPE.boolean) {
+            booleanFormRef.current?.openBooleanForm?.(currentSchema);
+        } else if (currentSchema.key === SCHEMA_TYPE.enum) {
+            enumFormRef.current?.openEnumForm?.(currentSchema);
+        } else if (currentSchema.key === SCHEMA_TYPE.anyOf) {
+            anyOfFormRef.current?.openAnyOfForm?.(currentSchema);
         } else {
             setIsEdit(false);
             setCurEdit(false);

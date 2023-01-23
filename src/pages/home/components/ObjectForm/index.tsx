@@ -4,9 +4,10 @@ import { Checkbox, Form } from 'antd';
 import { memo, useState, useCallback, useEffect, forwardRef, useImperativeHandle, useRef, useMemo } from 'react';
 import { useModelRef } from '../..';
 import { marcoTask } from '@/uitls';
-// import styles from './style.module.less';
+// @ts-ignore
+import styles from './style.module.less';
 
-const styles = require('./style.module.less');
+// const styles = require('./style.module.less');
 const { Item } = Form;
 const { Group } = Checkbox;
 
@@ -23,8 +24,8 @@ const ObjectForm = forwardRef<IObjectFormRef, IObjectFormProps>(({}, ref) => {
     const [open, setOpen] = useState(false);
     const [options, setOptions, resetOptions] = useResetState<{ label: string; value: string }[]>([]);
     const [initialValues, setInitialValues] = useState<IObject>({});
-    const openObjectForm = useCallback((currentSchemas: IObjectSchema) => {
-        const { required, properties } = currentSchemas;
+    const openObjectForm = useCallback((currentSchema: IObjectSchema) => {
+        const { required, properties } = currentSchema;
         setOpen(true);
         setOptions(
             Object.keys(properties).map((key) => ({
@@ -33,6 +34,7 @@ const ObjectForm = forwardRef<IObjectFormRef, IObjectFormProps>(({}, ref) => {
             }))
         );
         setInitialValues({ required: required || [] });
+        console.log('currentSchema ===> ', currentSchema);
         setCurrentSchema(currentSchema);
     }, []);
     useEffect(() => {
@@ -43,15 +45,13 @@ const ObjectForm = forwardRef<IObjectFormRef, IObjectFormProps>(({}, ref) => {
     const onFinish = useCallback(
         (values: IObject) => {
             const { required } = values;
+            console.log('currentSchema ===> ', currentSchema);
+            console.log('currentSchema.required ===> ', currentSchema?.required);
             if (currentSchema) {
                 currentSchema.required = required;
+                console.log('currentSchema.required ===> ', currentSchema.required);
             }
             setOpen(false);
-            // resetOptions();
-            // resetRequired();
-            // marcoTask(() => {
-            // });
-            // resetPaths();
         },
         [currentSchema]
     );
@@ -60,7 +60,7 @@ const ObjectForm = forwardRef<IObjectFormRef, IObjectFormProps>(({}, ref) => {
     return (
         <ModalForm ref={formRef} open={open} setOpen={setOpen} initialValues={initialValues} onFinish={onFinish} title='对象属性'>
             <Item label='必选' name='required'>
-                <Group options={options} />
+                <Group options={options} className={styles.group} />
             </Item>
         </ModalForm>
     );
