@@ -16,6 +16,7 @@ export interface IStringFormRef {
 const options: { value: IStringSchemaExtendedType; label: string }[] = [
     { value: 'timestamp', label: '时间戳' },
     { value: 'url', label: '网址' },
+    { value: 'imgUrl', label: '图片' },
     { value: 'name', label: '姓名' },
     { value: 'county', label: '地址' },
     { value: 'en', label: '英文' },

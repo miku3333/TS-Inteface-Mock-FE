@@ -5,6 +5,13 @@ declare global {
         [key: string]: any;
     }
 
+    interface IResponse<T = any> {
+        code: number;
+        success: boolean;
+        msg?: string | null;
+        data: T;
+    }
+
     type ISchemaConstType = string | number | null | boolean;
     type ISchemaBaseType = 'string' | 'number' | 'null' | 'boolean';
     type ITSJSONSchema7TypeName = 'string' | 'number' | 'null' | 'boolean' | 'array' | 'object';
@@ -20,7 +27,7 @@ declare global {
         extraType: 'string';
     }
 
-    type IStringSchemaExtendedType = 'timestamp' | 'url' | 'normal' | 'name' | 'county' | 'en';
+    type IStringSchemaExtendedType = 'timestamp' | 'url' | 'imgUrl' | 'normal' | 'name' | 'county' | 'en';
     interface IStringSchemaExtended extends IStringSchema {
         max?: number;
         min?: number;

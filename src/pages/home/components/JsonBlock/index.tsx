@@ -87,6 +87,11 @@ const JsonBlock = memo(({ paths, k, parentSchema, currentSchema, depth, noHeight
     const { isEdit, setIsEdit } = useContext(EditContext);
     const [curEdit, setCurEdit] = useState(false);
 
+    if (noHeightLimit) {
+        console.log('noHeight ===> ');
+        console.log('currentSchema ===> ', currentSchema);
+    }
+
     useUpdateEffect(() => {
         const ref = listRef.current;
         if (ref) {
@@ -233,13 +238,22 @@ const JsonBlock = memo(({ paths, k, parentSchema, currentSchema, depth, noHeight
                 );
                 break;
         }
+        if (noHeightLimit) {
+            console.log('noHeight ===> ');
+            console.log('noHeight ===> ');
+            console.log('noHeight ===> ');
+            console.log('extraEle ===> ', extraEle);
+        }
         return extraEle;
-    }, []);
+    }, [currentSchema]);
 
     const ChildBlock = getCurrentBlock();
 
     // @ts-ignore
     const { key, min, max } = currentSchema || {};
+
+    console.log('currentSchema ===> ', currentSchema);
+    console.log('currentSchema.key ===> ', currentSchema.key);
 
     return (
         <div

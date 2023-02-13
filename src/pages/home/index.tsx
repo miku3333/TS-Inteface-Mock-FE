@@ -1,4 +1,4 @@
-import { Button, Form } from 'antd';
+import { Button, Form, Input, message } from 'antd';
 import { memo, useState, useCallback, useEffect, useRef, createContext, MutableRefObject, RefObject } from 'react';
 // @ts-ignore
 import styles from './style.module.less';
@@ -14,6 +14,9 @@ import NumberForm, { INumberFormRef } from './components/NumberForm';
 import BooleanForm, { IBooleanFormRef } from './components/BooleanForm';
 import EnumForm, { IEnumFormRef } from './components/EnumForm';
 import AnyOfForm, { IAnyOfFormRef } from './components/AnyOfForm';
+import axios from 'axios';
+import { marcoTask, niceTryAsync } from '@/uitls';
+import useRefresh from '@/hooks/useRefresh';
 
 const { Item } = Form;
 
@@ -51,7 +54,7 @@ export const EditContext = createContext<{
 
 const Home = ({}: IHomeProps) => {
     // const formattedSchema = useRef(json as IFormattedSchema);
-    const formattedSchema = useReactive(json as IFormattedSchema);
+    const formattedSchema = useReactive<Partial<IFormattedSchema>>({});
     const objectFormRef = useRef<IObjectFormRef>(null);
     const arrayFormRef = useRef<IArrayFormRef>(null);
     const stringFormRef = useRef<IStringFormRef>(null);
@@ -63,11 +66,38 @@ const Home = ({}: IHomeProps) => {
         console.log('formattedSchema ===> ', formattedSchema);
     }, []);
     const [isEdit, setIsEdit] = useState(false);
-    // useRefresh();
+    const refresh = useRefresh();
+    const [path, setPath] = useState('/api/test');
+    const onChange = async () => {
+        const res = await niceTryAsync(() => axios.post<IResponse<IFormattedSchema>>('http://localhost:23333/find', { path }));
+        if (res?.data?.success) {
+            const data = res.data.data;
+            console.log('data ===> ', data);
+            formattedSchema.path = path;
+            formattedSchema.schema = data.schema;
+            console.log('formattedSchema.schema ===> ', formattedSchema.schema);
+            console.log('formattedSchema ===> ', formattedSchema);
+        } else {
+            message.error('该接口不存在');
+        }
+    };
+
+    const onSave = async () => {
+        const res = await niceTryAsync(() => axios.post<IResponse<null>>('http://localhost:23333/save', formattedSchema));
+        if (res?.data?.success) {
+            message.success('修改成功');
+        }
+    };
 
     return (
         <div className={styles.home}>
-            <Button type='primary'>保存</Button>
+            <Input placeholder='请输入接口path' value={path} onChange={(e) => setPath(e.target.value)} />
+            <Button type='primary' onClick={onChange}>
+                更改接口
+            </Button>
+            <Button type='primary' onClick={onSave}>
+                保存
+            </Button>
             <EditContext.Provider value={{ isEdit, setIsEdit }}>
                 {/* prettier-ignore */}
                 <RefProvider 
@@ -80,25 +110,27 @@ const Home = ({}: IHomeProps) => {
                     anyOfFormRef={anyOfFormRef}
                 >
                     {/* <ModalContext.Provider value={{ objectFormRef }}> */}
-                    <div className={classNames({ [styles.mask]: isEdit })}>
-                        <JsonBlock
-                            noHeightLimit
-                            depth={0}
-                            k={[formattedSchema.path]}
-                            currentSchema={formattedSchema.schema}
-                            // parentSchema={formattedSchema}
-                            // paths={[formattedSchema.current.path]}
-                            paths={[]}
-                        />
-                        {/* </ModalContext.Provider> */}
-                        <ObjectForm ref={objectFormRef} />
-                        <ArrayForm ref={arrayFormRef} />
-                        <StringForm ref={stringFormRef} />
-                        <NumberForm ref={numberFormRef} />
-                        <BooleanForm ref={booleanFormRef} />
-                        <EnumForm ref={enumFormRef} />
-                        <AnyOfForm ref={anyOfFormRef} />
-                    </div>
+                    {!!Object.keys(formattedSchema).length && (
+                        <div className={classNames({ [styles.mask]: isEdit })}>
+                            <JsonBlock
+                                noHeightLimit
+                                depth={0}
+                                k={[formattedSchema.path]}
+                                currentSchema={formattedSchema.schema}
+                                // parentSchema={formattedSchema}
+                                // paths={[formattedSchema.current.path]}
+                                paths={[]}
+                            />
+                            {/* </ModalContext.Provider> */}
+                            <ObjectForm ref={objectFormRef} />
+                            <ArrayForm ref={arrayFormRef} />
+                            <StringForm ref={stringFormRef} />
+                            <NumberForm ref={numberFormRef} />
+                            <BooleanForm ref={booleanFormRef} />
+                            <EnumForm ref={enumFormRef} />
+                            <AnyOfForm ref={anyOfFormRef} />
+                        </div>
+                    )}
                 </RefProvider>
             </EditContext.Provider>
         </div>
